@@ -37,7 +37,7 @@ public class QuadDynamics : MonoBehaviour {
 	
 	//Props Stuff
 	float propPitch = 4.5f;
-	float propDiameter = 8f;
+	float propDiameter = 10f;
 	float torqueConstant;
 	
 	//Electronics Stuff:

@@ -149,7 +149,7 @@ public class ControllerV4 : MonoBehaviour {
 	}
 	
 	void applyRotation(){
-		float kP = 0.1f;
+		float kP = 0.01f;
 		int[] throttleshifts = new int[4];
 		throttleshifts[0] += (int) (-kP * QuadDynamics.throttles[0] * ErrorAngle / 4 * 20 * Mathf.Cos (ErrorTheta));
 		throttleshifts[1] += (int) (-kP * QuadDynamics.throttles[1] * ErrorAngle / 4 * 20 * Mathf.Sin (ErrorTheta));
