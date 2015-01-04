@@ -5,7 +5,7 @@ public class ControllerV4 : MonoBehaviour {
 	
 	Vector3 desiredLoc = new Vector3(10f,10f,10f);
 	Vector3 Error, LastError;
-	Vector3 Velocity, ErrorVelocity, VelocityError, LastPosition; //ErrorVelocity = Change in Error, VelocityError = DesiredVelocity - Velocity
+	Vector3 Velocity, ErrorVelocity, VelocityError, LastPosition; //ErrorVelocity = Rate of Change in Error, VelocityError = DesiredVelocity - Velocity
 	Quaternion LastErrorRotation;
 	
 	float theta;
@@ -89,11 +89,24 @@ public class ControllerV4 : MonoBehaviour {
 		//Now convert to Quaternion/Euler Angles
 		//Corrosponds to a rotation z-x-y by 0-angle-(theta+45) for vector (0,0,1)
 		//	or 0-(90-angle)-theta for (0,1,0)
-		Quaternion DesiredRotation = new Quaternion();
+		Quaternion DesiredRotation = Quaternion.Euler(angle * (180 / Mathf.PI) , theta * (180 / Mathf.PI)  + 45, 0);
 		
-		DesiredRotation.eulerAngles.Set(angle, theta + 45 * (Mathf.PI / 180), 0);
-		Debug.DrawRay (transform.position, DesiredRotation * Vector3.up, Color.blue);
+		Debug.DrawRay(transform.position, DesiredRotation * Vector3.up, Color.blue);
 		Debug.Log("DesiredRotation: " + DesiredRotation);
+		
+		//NEXT LINE WRONG: Value drifts...
+		//Quaternion ErrorRotation = Quaternion.Euler(DesiredRotation.eulerAngles - transform.rotation.eulerAngles);
+		//Debug.DrawRay(transform.position, ErrorRotation * transform.up, Color.cyan);
+		
+		//From http://answers.unity3d.com/questions/35541/problem-finding-relative-rotation-from-one-quatern.html
+		//Quaternion relative = Quaternion.Inverse(a) * b;
+		//Quaternion ErrorRotation = Quaternion.Inverse(transform.rotation ) * DesiredRotation;
+		//Debug.DrawRay(transform.position, ErrorRotation * transform.up, Color.cyan);
+		
+		//From http://answers.unity3d.com/questions/18438/rotation-relative-to-a-transform
+		//Quaternion rotationDelta = Quaternion.FromToRotation(modelA.transform.forward, modelB.transform.forward);
+		Quaternion ErrorRotation = Quaternion.FromToRotation(transform.rotation * Vector3.up, DesiredRotation * Vector3.up);
+		Debug.DrawRay(transform.position, ErrorRotation * (0.5f * transform.up), Color.cyan);
 	}
 	
 	void calcVertThrottle(){
