@@ -16,10 +16,10 @@ public class QuadDynamics : MonoBehaviour {
 	float maxMotorVolt = 11.1f;
 	
 	Vector3[] motorPositions = {
-		new Vector3(-0.225f,0,0.225f),
 		new Vector3(0.225f,0,0.225f),
+		new Vector3(0.225f,0,-0.225f),
 		new Vector3(-0.225f,0,-0.225f),
-		new Vector3(0.225f,0,-0.225f)
+		new Vector3(-0.225f,0,0.225f)
 	};
 	
 	//Battery Stuff
@@ -71,8 +71,6 @@ public class QuadDynamics : MonoBehaviour {
 		
 		Debug.Log ("Throttles: 1:" + throttles[0] + "\t2:" + throttles[1] + "\t3:"
 			+ throttles[2] + "\t4:" + throttles[3]);
-		Debug.DrawRay(transform.position, transform.forward, Color.red);
-		Debug.DrawRay(transform.position, transform.up / 2, Color.red);
 		
 	}
 	
@@ -159,8 +157,9 @@ public class QuadDynamics : MonoBehaviour {
 	
 	void applyThrusts(){
 		for(int i = 0; i <4; i++){
+			//Vector3 thrustVector = Vector3.up * thrusts[i];
 			Vector3 thrustVector = transform.up * thrusts[i];
-			rigidbody.AddForceAtPosition(thrustVector, transform.rotation * motorPositions[i]);
+			rigidbody.AddForceAtPosition(thrustVector, (transform.rotation * motorPositions[i]) + transform.position);
 			Debug.DrawRay(transform.rotation * motorPositions[i], thrustVector, Color.green);
 		}
 		
