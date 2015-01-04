@@ -82,31 +82,29 @@ public class ControllerV4 : MonoBehaviour {
 			theta = Mathf.Atan(HorizontalError.x / HorizontalError.z);
 		}
 		//Calculations are nicer when taking the forward line as through two diagonally opposite motors
+		//(rads)
 		theta -= 45 * (Mathf.PI / 180);
 		float angle = 20 * (Mathf.PI / 180) * HorizontalError.magnitude / VelocityError.y;
 		Debug.Log ("Angle: " + angle + "\tTheta: " + theta);
 		
-		//Now convert to Quaternion/Euler Angles
-		//Corrosponds to a rotation z-x-y by 0-angle-(theta+45) for vector (0,0,1)
+		//Now convert to Quaternion/Euler Angles (degrees)
+		//Corrosponds to a rotation z-x-y by 0-angle-(theta+45) for unit vector (0,0,1)
 		//	or 0-(90-angle)-theta for (0,1,0)
 		Quaternion DesiredRotation = Quaternion.Euler(angle * (180 / Mathf.PI) , theta * (180 / Mathf.PI)  + 45, 0);
 		
 		Debug.DrawRay(transform.position, DesiredRotation * Vector3.up, Color.blue);
 		Debug.Log("DesiredRotation: " + DesiredRotation);
 		
-		//NEXT LINE WRONG: Value drifts...
-		//Quaternion ErrorRotation = Quaternion.Euler(DesiredRotation.eulerAngles - transform.rotation.eulerAngles);
-		//Debug.DrawRay(transform.position, ErrorRotation * transform.up, Color.cyan);
-		
-		//From http://answers.unity3d.com/questions/35541/problem-finding-relative-rotation-from-one-quatern.html
-		//Quaternion relative = Quaternion.Inverse(a) * b;
-		//Quaternion ErrorRotation = Quaternion.Inverse(transform.rotation ) * DesiredRotation;
-		//Debug.DrawRay(transform.position, ErrorRotation * transform.up, Color.cyan);
-		
 		//From http://answers.unity3d.com/questions/18438/rotation-relative-to-a-transform
 		//Quaternion rotationDelta = Quaternion.FromToRotation(modelA.transform.forward, modelB.transform.forward);
-		Quaternion ErrorRotation = Quaternion.FromToRotation(transform.rotation * Vector3.up, DesiredRotation * Vector3.up);
+		Quaternion ErrorRotation = Quaternion.FromToRotation(transform.rotation * Vector3.up,
+			DesiredRotation * Vector3.up);
 		Debug.DrawRay(transform.position, ErrorRotation * (0.5f * transform.up), Color.cyan);
+		
+		//Now convert back to theta/angle format (rads)
+		//Quaternion x-y-z corrosponds to angle-(theta+45)-0 for unit vector (0,1,0)
+		float ErrorTheta = (ErrorRotation.eulerAngles.y - 45) * (Mathf.PI / 180);
+		float ErrorAngle = ErrorRotation.x * (Mathf.PI / 180);
 	}
 	
 	void calcVertThrottle(){
