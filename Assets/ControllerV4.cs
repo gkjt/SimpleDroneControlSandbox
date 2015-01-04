@@ -141,7 +141,7 @@ public class ControllerV4 : MonoBehaviour {
 	
 	void calcVertThrottle(){
 		//PD:
-		float kP = 1.0f, kD = 1.0f;
+		float kP = 1.0f, kD = 3.0f;
 		int ThrottleShift = (int) (kP * Error.y + kD * ErrorVelocity.y);
 		
 		QuadDynamics.shiftThrottleAve(ThrottleShift);
