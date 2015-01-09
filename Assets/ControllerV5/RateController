@@ -1,0 +1,8 @@
+using System.collections;
+using UnityEngine;
+
+
+public class RateController {
+        static Quaternion DesiredRate
+
+}
